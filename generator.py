@@ -9,6 +9,7 @@ from typing import List
 from lib.download import Downloader
 from lib.transform import Transformer
 from lib.sql import Database
+from lib.server import start_server
 
 def download_weather_data(db: Database, station_list: List[str], start_date: str, end_date: str, api_key: str, is_cache_enabled: bool, data_dir: str, max_workers: int) -> None:
     """Download weather data from the given paths."""
@@ -64,7 +65,8 @@ def main() -> None:
     transformer_parser.add_argument("--transformers", nargs="+", default=[], help="Transformers to run (default: all)")
 
     # List transformers subcommand
-    list_transformers_parser = subparsers.add_parser("list_transformers", help="List available transformers")
+    subparsers.add_parser("list_transformers", help="List available transformers")
+    subparsers.add_parser("server", help="Start the server")
 
     args = parser.parse_args()
 
@@ -74,6 +76,8 @@ def main() -> None:
         run_transformers(args.stations, args.transformers)
     elif args.command == "list_transformers":
         list_transformers()
+    elif args.command == "server":
+        start_server(db)
     else:
         parser.print_help()
 
